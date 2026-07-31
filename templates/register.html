@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | Student Productivity Suite</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='material.css') }}">
+</head>
+
+<body>
+
+<div class="center-card">
+
+    <div class="md-card login-card">
+
+        <h1>Create Account</h1>
+
+        <p class="subtitle">
+            Create your account to start managing your academic tasks.
+        </p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="md-form" autocomplete="off">
+
+            <label>
+
+                Username
+
+                <input
+                    type="text"
+                    name="username"
+                    maxlength="30"
+                    placeholder="Enter username"
+                    required>
+
+            </label>
+
+            <label>
+
+                Email
+
+                <input
+                    type="email"
+                    name="email"
+                    maxlength="100"
+                    placeholder="Enter email"
+                    required>
+
+            </label>
+
+            <label>
+
+                Password
+
+                <input
+                    type="password"
+                    name="password"
+                    minlength="6"
+                    maxlength="100"
+                    placeholder="Enter password"
+                    required>
+
+            </label>
+
+            <label>
+
+                Confirm Password
+
+                <input
+                    type="password"
+                    name="confirm_password"
+                    minlength="6"
+                    maxlength="100"
+                    placeholder="Confirm password"
+                    required>
+
+            </label>
+
+            <div class="md-actions">
+
+                <button
+                    type="submit"
+                    class="md-btn md-btn-primary">
+
+                    Create Account
+
+                </button>
+
+            </div>
+
+        </form>
+
+        <hr>
+
+        <p style="text-align:center; margin-top:18px;">
+
+            Already have an account?
+
+            <br><br>
+
+            <a href="{{ url_for('login') }}">
+                Sign In
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
+
+</body>
+</html>

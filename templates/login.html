@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Student Productivity Suite</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='material.css') }}">
+</head>
+
+<body>
+
+<main class="md-container center-card">
+
+    <div class="md-card login-card">
+
+        <h2>Welcome Back 👋</h2>
+
+        <p class="subtitle">
+            Sign in to continue
+        </p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="md-form">
+
+            <label>Email</label>
+
+            <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+            >
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+            >
+
+            <div class="md-actions">
+
+                <button
+                    class="md-btn md-btn-primary"
+                    type="submit">
+
+                    Login
+
+                </button>
+
+            </div>
+
+        </form>
+
+        <hr>
+
+        <p>
+            Don't have an account?
+        </p>
+
+        <a href="{{ url_for('register') }}">
+
+            Create Account
+
+        </a>
+
+    </div>
+
+</main>
+
+</body>
+</html>

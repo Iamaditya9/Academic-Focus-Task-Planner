@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Academic Focus — Task Planner</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='material.css') }}">
+</head>
+
+<body>
+
+<header class="md-header">
+    <div class="md-container header-flex">
+
+        <h1>Academic Focus — Student Task Planner</h1>
+
+        <div class="header-right">
+            <span class="welcome-text">
+                Welcome, {{ username }}
+            </span>
+
+            <a href="/export" class="md-btn md-btn-outline">
+                Export CSV
+            </a>
+
+            <a href="/logout" class="md-btn md-btn-outline logout-btn">
+                Logout
+            </a>
+        </div>
+
+    </div>
+</header>
+
+<main class="md-container">
+
+    <!-- DASHBOARD -->
+
+    <section class="md-card md-dashboard">
+
+        <h2>Overview</h2>
+
+        <div class="stats-row">
+
+            <div class="stat-box">
+                <div class="stat-label">Total Tasks</div>
+                <div class="stat-value">{{ stats.total }}</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value">{{ stats.completed }}</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value">{{ stats.pending }}</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-label">Due Today</div>
+                <div class="stat-value">{{ stats.due_today }}</div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-label">Due in 7 Days</div>
+                <div class="stat-value">{{ stats.due_this_week }}</div>
+            </div>
+
+        </div>
+
+        <div class="progress-wrapper">
+
+            <div class="progress-label">
+                Completion
+            </div>
+
+            <div class="progress-bar">
+                <div
+                    class="progress-fill"
+                    style="width:{{ stats.completion_pct }}%;">
+                </div>
+            </div>
+
+            <div class="progress-caption">
+                {{ stats.completed }} of {{ stats.total }} tasks completed
+                ({{ stats.completion_pct }}%)
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- GRID -->
+
+    <section class="md-grid">
+
+        <!-- LEFT -->
+
+        <div class="md-card md-col-5">
+
+            <h2>Add Task</h2>
+
+            <form action="/tasks" method="POST" class="md-form" autocomplete="off">
+
+                <label>
+                    Title
+                    <input
+                        type="text"
+                        name="title"
+                        maxlength="100"
+                        required>
+                </label>
+
+                <label>
+                    Due Date
+                    <input
+                        type="date"
+                        name="due_date">
+                </label>
+
+                <label>
+
+                    Priority
+
+                    <select name="priority">
+
+                        <option value="Low">Low</option>
+                        <option value="Normal" selected>Normal</option>
+                        <option value="High">High</option>
+
+                    </select>
+
+                </label>
+
+                <label>
+
+                    Course
+
+                    <input
+                        type="text"
+                        name="course"
+                        maxlength="30"
+                        placeholder="Optional">
+
+                </label>
+
+                <div class="md-actions">
+
+                    <button
+                        class="md-btn md-btn-primary"
+                        type="submit">
+
+                        Add Task
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <!-- RIGHT -->
+
+        <div class="md-card md-col-7">
+
+            <div class="tasks-header">
+
+                <h2>Tasks</h2>
+
+                <form class="filter-form" method="GET">
+
+                    <label>
+
+                        Sort By
+
+                        <select
+                            name="sort"
+                            onchange="this.form.submit()">
+
+                            <option value="due"
+                                {% if sort=="due" %}selected{% endif %}>
+                                Due Date
+                            </option>
+
+                            <option value="priority"
+                                {% if sort=="priority" %}selected{% endif %}>
+                                Priority
+                            </option>
+
+                            <option value="course"
+                                {% if sort=="course" %}selected{% endif %}>
+                                Course
+                            </option>
+
+                        </select>
+
+                    </label>
+
+                    <label>
+
+                        Priority
+
+                        <select
+                            name="priority"
+                            onchange="this.form.submit()">
+
+                            <option value="all"
+                                {% if priority=="all" %}selected{% endif %}>
+                                All
+                            </option>
+
+                            <option value="Low"
+                                {% if priority=="Low" %}selected{% endif %}>
+                                Low
+                            </option>
+
+                            <option value="Normal"
+                                {% if priority=="Normal" %}selected{% endif %}>
+                                Normal
+                            </option>
+
+                            <option value="High"
+                                {% if priority=="High" %}selected{% endif %}>
+                                High
+                            </option>
+
+                        </select>
+
+                    </label>
+
+                    <label>
+
+                        Status
+
+                        <select
+                            name="status"
+                            onchange="this.form.submit()">
+
+                            <option value="all"
+                                {% if status=="all" %}selected{% endif %}>
+                                All
+                            </option>
+
+                            <option value="pending"
+                                {% if status=="pending" %}selected{% endif %}>
+                                Pending
+                            </option>
+
+                            <option value="completed"
+                                {% if status=="completed" %}selected{% endif %}>
+                                Completed
+                            </option>
+
+                        </select>
+
+                    </label>
+
+                </form>
+
+            </div>
+
+            <div class="task-list">
+
+                {% for t in tasks %}
+
+                <div class="task-card {% if t.completed %}done{% endif %}">
+
+                    <div class="task-main">
+
+                        <div class="task-title">
+
+    {% if t.completed %}
+<span style="
+background:#16a34a;
+color:white;
+padding:2px 6px;
+border-radius:999px;
+font-size:12px;
+margin-right:6px;
+">
+✓
+</span>
+{% endif %}
+
+    {{ t.title }}
+
+</div>
+
+                        <div class="task-meta">
+
+                            {{ t.due_date if t.due_date else "No Due Date" }}
+
+                            •
+
+                            {% if t.priority=="High" %}
+                                <span class="priority high">🔴 High</span>
+                            {% elif t.priority=="Normal" %}
+                                <span class="priority normal">🟡 Normal</span>
+                            {% else %}
+                                <span class="priority low">🟢 Low</span>
+                            {% endif %}
+
+                            •
+
+                            {{ t.course if t.course else "No Course" }}
+
+                        </div>
+
+                    </div>
+
+                    <div class="task-actions">
+
+                        <button
+                            type="button"
+                            class="md-icon"
+                            data-id="{{ t.id }}"
+                            onclick="toggleComplete(this.dataset.id)">
+                            ✓
+                        </button>
+
+                        <button
+                            type="button"
+                            class="md-icon danger"
+                            data-id="{{ t.id }}"
+                            onclick="deleteTask(this.dataset.id)">
+                            🗑
+                        </button>
+
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty">
+
+                    <h3>📋 No Tasks Yet</h3>
+
+                    <p>
+                        Create your first academic task to get started.
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<script>
+
+async function toggleComplete(id){
+
+    const response = await fetch("/tasks/" + id,{
+        method:"PATCH"
+    });
+
+    if(response.ok){
+        location.reload();
+    }
+
+}
+
+async function deleteTask(id){
+
+    if(!confirm("Delete this task?")){
+        return;
+    }
+
+    const response = await fetch("/tasks/" + id,{
+        method:"DELETE"
+    });
+
+    if(response.ok){
+        location.reload();
+    }
+
+}
+const flashes = document.querySelectorAll(".flash");
+
+if(flashes.length){
+
+    setTimeout(() => {
+
+        flashes.forEach(msg => {
+
+            msg.style.opacity = "0";
+
+            setTimeout(() => {
+                msg.remove();
+            },300);
+
+        });
+
+    },3000);
+
+}
+
+</script>
+
+</body>
+</html>
